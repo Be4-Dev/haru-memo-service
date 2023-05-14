@@ -22,6 +22,7 @@ dependencies {
 	implementation("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation ("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2")//@Mapper쓸려면 이 라이브러리 있어야 함
 }
 
 tasks.withType<KotlinCompile> {
