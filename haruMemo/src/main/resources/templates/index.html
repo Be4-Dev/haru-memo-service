@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="path/jquery-3.7.0.min.js"></script>
+<body>
+<!--프트폴리오페이지 방명록 참고 https://github.com/MinJa-e/portfolio/blob/master/src/main/resources/templates/views/talk.html-->
+
+<div th:each="memo: ${list}" class="row">
+    <br>
+    <input type="checkbox" name="memo" value="메모ID받기">
+    <span>[</span>
+    <span th:text="${memo.memoId}"></span>
+    <span>] </span>
+    <span>제목 : </span>
+    <span th:if="${#strings.isEmpty(memo.memoPassword)}" th:text="${memo.memoTitle}">
+        타임리프적용x
+    </span>
+    <span th:unless="${#strings.isEmpty(memo.memoPassword)}">
+        비밀
+    </span>
+    <span> / </span>
+    <span>내용 : </span>
+    <span th:if="${#strings.isEmpty(memo.memoPassword)}" th:text="${memo.memoContent}">
+        타임리프적용x
+    </span>
+    <span th:unless="${#strings.isEmpty(memo.memoPassword)}">
+        비밀
+    </span>
+    <br>
+    <button type="button" th:onclick="|location.href='/memos/${memo.memoId}'|">수정</button>
+    <button type="button" th:onclick="|javascript:btnDelete('${memo.memoId}')|">삭제</button>
+
+    <button type="button" th:onclick="|javascript:btnKeepYN('${memo.memoId}')|">메모보관 설정/해제</button>
+    <button type="button" onclick="location.href='#'">메모핀고정 설정/해제</button>
+    <button type="button" th:onclick="|javascript:btnCopy('${memo.memoId}')|">메모 복사</button>
+    <button type="button" th:onclick="|javascript:btnPassword('${memo.memoId}','${#strings.isEmpty(memo.memoPassword)}')|">암호설정</button>
+    <span> ( 메모 보관 여부 : </span>
+    <span th:text="${memo.memoKeepYN}"></span>
+    <span> / 메모 핀고정 여부 : </span>
+    <span th:text="${memo.pinYN}"></span>
+    <span> ) </span>
+</div>
+<br>
+<a href="/write">메모 작성</a>
+<a href="#">일괄 삭제</a>
+<br>
+<input type="text" id="searchKeyword">
+<button type="button"  onclick="btnSearch()">검색</button>
+<br>
+<select name="sort" id="sort">
+    <option value="num">번호순</option>
+    <option value="abc">가나다순</option>
+</select>
+</body>
+<script th:inline="javascript">
+/*<![CDATA[*/
+    function btnDelete(memoId) {
+        if (!confirm("정말 삭제하시겠습니까?")) {
+            alert("test");
+        } else {
+            fetch(`http://localhost:8080/memos/`+memoId, {
+                        method: 'DELETE',
+                        }).then(response => {
+                            if (response.ok) {
+                                return response.text();
+                            }
+                        }).then(msg => {
+                            location.href = '/memos';
+                        });
+        }
+    }
+    function btnKeepYN(memoId) {
+        if (!confirm("보관여부 바꾸실?")) {
+            alert("test");
+        } else {
+            fetch(`http://localhost:8080/memos/`+memoId, {
+                        method: 'PATCH',
+                        }).then(response => {
+                            if (response.ok) {
+                                return response.text();
+                            }
+                        }).then(msg => {
+                            alert("테스트성공");
+                            location.href = '/memos';
+                        });
+        }
+    }
+    function btnCopy(memoId) {
+        if (!confirm("메모 복사하실?")) {
+            alert("test");
+        } else {
+            fetch(`http://localhost:8080/memos/`+memoId, {
+                        method: 'POST',
+                        }).then(response => {
+                            alert("테스트성공");
+                            location.href = '/memos';
+                        });
+        }
+    }
+    function btnPassword(memoId,passwordYN) {
+        alert(passwordYN);
+        if(passwordYN == true){//비밀번호가 없으면
+            alert("비밀번호 없음");
+            var setPassword = prompt("설정할 암호를 입력해주세요.");
+        }else{
+            alert("비밀번호 있음");
+            var checkPassword = prompt("암호를 입력해주세요.");
+        }
+    /**********************************************************
+        if (!confirm("메모 복사하실?")) {
+            alert("test");
+        } else {
+            fetch(`http://localhost:8080/memos/`+memoId, {
+                        method: 'POST',
+                        }).then(response => {
+                            alert("테스트성공");
+                            location.href = '/memos';
+                        });
+        }
+    **********************************************************/
+    }
+    function btnSearch(){
+        let searchKeyword = document.getElementById("searchKeyword").value;
+        let sort = document.getElementById("sort");
+        let sortOption = sort.options[sort.selectedIndex].value;
+        location.href = '/memos?searchKeyword='+searchKeyword+'&sort='+sortOption;
+    }
+
+ /*]]>*/
+</script>

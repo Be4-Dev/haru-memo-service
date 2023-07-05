@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form>
+    <div>
+        <label> 제목 :
+            <input type="text" name="memoTitle" id="memoTitle" placeholder="제목 작성" th:value="${memo.memoTitle}">
+        </label></div>
+    <div>
+        내용 :
+        <textarea class="form-control" rows="5" name="memoContent" id="memoContent" placeholder="내용 작성" th:text="${memo.memoContent}">
+</textarea></div>
+    <button type="button" id="btn-update">수정</button>
+    <button type="button" onclick="location.href='/memos'">취소</button>
+</form>
+</body>
+</html>
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+document.addEventListener("DOMContentLoaded", function() {
+    var updateBtn = document.getElementById("btn-update");
+
+        updateBtn.addEventListener("click", function() {
+            var memoTitle = document.getElementById("memoTitle").value;
+            var memoContent = document.getElementById("memoContent").value;
+            var memoId = [[${memo.memoId}]];
+            alert(memoId);
+
+            fetch(`http://localhost:8080/memos/[[${memo.memoId}]]`, {
+                            method: 'PUT',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                memoTitle: memoTitle,
+                                memoContent: memoContent,
+                                memoId: memoId,
+                            }),
+                        }).then(response => {
+                            //alert(memoTitle);
+                            //alert(memoContent);
+                            location.href="/memos";
+                        });
+        });
+});
+
+ /*]]>*/
+</script>

@@ -8,15 +8,14 @@
 <form action="/memos" method="post">
     <div>
         <label> 제목 :
-            <input type="text" name="return" id="txt1">
+            <input type="text" name="memoTitle" placeholder="제목 작성">
         </label></div>
     <div>
         내용 :
-        <textarea class="form-control" rows="5" id="content"
-                  name="content" placeholder="내용 작성">
+        <textarea class="form-control" rows="5" name="memoContent" placeholder="내용 작성">
 </textarea></div>
     <input type="submit" value="작성">
-    <button>취소</button>
+    <button type="button" onclick="location.href='/memos'">취소</button>
 </form>
 </body>
 </html>

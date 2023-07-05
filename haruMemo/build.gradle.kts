@@ -22,7 +22,11 @@ dependencies {
 	implementation("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	implementation ("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2")//@Mapper쓸려면 이 라이브러리 있어야 함
+	implementation ("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")//@Mapper쓸려면 이 라이브러리 있어야 함
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa") // <-- 추가됨
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")     // <-- 추가됨
+	implementation("mysql:mysql-connector-java:8.0.30")// 버전 안 넣어주니까, 에러 남 8.0.30 꼭 넣어주기
+	implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
 }
 
 tasks.withType<KotlinCompile> {
