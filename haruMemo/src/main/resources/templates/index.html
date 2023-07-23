@@ -15,19 +15,19 @@
     <span th:text="${memo.memoId}"></span>
     <span>] </span>
     <span>제목 : </span>
-    <span th:if="${#strings.isEmpty(memo.memoPassword)}" th:text="${memo.memoTitle}">
-        타임리프적용x
-    </span>
-    <span th:unless="${#strings.isEmpty(memo.memoPassword)}">
+    <span th:if="${not #strings.isEmpty(memo.memoPassword)}">
         비밀
+    </span>
+    <span th:unless="${not #strings.isEmpty(memo.memoPassword)}" th:text="${memo.memoTitle}">
+        타임리프 적용x
     </span>
     <span> / </span>
     <span>내용 : </span>
-    <span th:if="${#strings.isEmpty(memo.memoPassword)}" th:text="${memo.memoContent}">
-        타임리프적용x
-    </span>
-    <span th:unless="${#strings.isEmpty(memo.memoPassword)}">
+    <span th:if="${not #strings.isEmpty(memo.memoPassword)}">
         비밀
+    </span>
+    <span th:unless="${not #strings.isEmpty(memo.memoPassword)}" th:text="${memo.memoContent}">
+        타임리프적용x
     </span>
     <br>
     <button type="button" th:onclick="|location.href='/memos/${memo.memoId}'|">수정</button>
@@ -36,7 +36,7 @@
     <button type="button" th:onclick="|javascript:btnKeepYN('${memo.memoId}')|">메모보관 설정/해제</button>
     <button type="button" onclick="location.href='#'">메모핀고정 설정/해제</button>
     <button type="button" th:onclick="|javascript:btnCopy('${memo.memoId}')|">메모 복사</button>
-    <button type="button" th:onclick="|javascript:btnPassword('${memo.memoId}','${#strings.isEmpty(memo.memoPassword)}')|">암호설정</button>
+    <button type="button" th:onclick="|javascript:btnPassword('${memo.memoId}',${not #strings.isEmpty(memo.memoPassword)})|">암호설정</button>
     <span> ( 메모 보관 여부 : </span>
     <span th:text="${memo.memoKeepYN}"></span>
     <span> / 메모 핀고정 여부 : </span>
@@ -61,7 +61,7 @@
         if (!confirm("정말 삭제하시겠습니까?")) {
             alert("test");
         } else {
-            fetch(`http://localhost:8080/memos/`+memoId, {
+            fetch(`http://localhost:8080/apiTest/memos/`+memoId, {
                         method: 'DELETE',
                         }).then(response => {
                             if (response.ok) {
@@ -76,7 +76,7 @@
         if (!confirm("보관여부 바꾸실?")) {
             alert("test");
         } else {
-            fetch(`http://localhost:8080/memos/`+memoId, {
+            fetch(`http://localhost:8080/apiTest/memos/`+memoId, {
                         method: 'PATCH',
                         }).then(response => {
                             if (response.ok) {
@@ -92,7 +92,7 @@
         if (!confirm("메모 복사하실?")) {
             alert("test");
         } else {
-            fetch(`http://localhost:8080/memos/`+memoId, {
+            fetch(`http://localhost:8080/apiTest/memos/`+memoId, {
                         method: 'POST',
                         }).then(response => {
                             alert("테스트성공");
@@ -101,11 +101,13 @@
         }
     }
     function btnPassword(memoId,passwordYN) {
-        alert(passwordYN);
-        if(passwordYN == true){//비밀번호가 없으면
+        alert(memoId,passwordYN);
+        if(!passwordYN){//비밀번호가 없으면
             alert("비밀번호 없음");
             var setPassword = prompt("설정할 암호를 입력해주세요.");
-        }else{
+        }
+        else
+        {
             alert("비밀번호 있음");
             var checkPassword = prompt("암호를 입력해주세요.");
         }
@@ -113,7 +115,7 @@
         if (!confirm("메모 복사하실?")) {
             alert("test");
         } else {
-            fetch(`http://localhost:8080/memos/`+memoId, {
+            fetch(`http://localhost:8080/apiTest/memos/`+memoId, {
                         method: 'POST',
                         }).then(response => {
                             alert("테스트성공");

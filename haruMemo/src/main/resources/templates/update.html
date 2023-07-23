@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var memoId = [[${memo.memoId}]];
             alert(memoId);
 
-            fetch(`http://localhost:8080/memos/[[${memo.memoId}]]`, {
+            fetch(`http://localhost:8080/apiTest/memos/[[${memo.memoId}]]`, {
                             method: 'PUT',
                             headers: {
                                 "Content-Type": "application/json",
