@@ -1,0 +1,9 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haru.memo.mapper.FolderMapper">
+    <select id="getList" resultType="com.haru.memo.model.FolderVo">
+        SELECT *
+        FROM folder
+    </select>
+</mapper>

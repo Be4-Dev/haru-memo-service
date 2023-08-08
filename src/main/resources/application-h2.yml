@@ -1,0 +1,28 @@
+server:
+  address: localhost
+  port: 8080
+
+spring:
+  thymeleaf:
+    cache: false
+  devtools:
+    livereload:
+      enabled: true
+    remote:
+      restart:
+        enabled: true
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+mybatis:
+  type-aliases-package: com.haru.memo.model
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
