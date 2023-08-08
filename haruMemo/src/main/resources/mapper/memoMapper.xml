@@ -3,8 +3,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.haruMemo.mapper.MemoMapper">
     <select id="getList" parameterType="string" resultType="com.haruMemo.model.MemoVo">
-        SELECT memo_id memoId ,memo_title memoTitle, memo_content memoContent, memo_keep_yn memoKeepYN, memo_password memoPassword
-        FROM haru.memo
+        SELECT memo_id memoId ,memo_title memoTitle, memo_content memoContent, memo_keep_yn memoKeepYN, memo_password memoPassword, f.name folderName
+        FROM memo m left outer join folder f
+        ON m.folder_id = f.id
         <if test="searchKeyword != null">
             WHERE memo_title like concat('%',#{searchKeyword},'%') or memo_content like concat('%',#{searchKeyword},'%')
         </if>

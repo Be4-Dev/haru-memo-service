@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -9,11 +9,20 @@
     <div>
         <label> 제목 :
             <input type="text" name="memoTitle" placeholder="제목 작성">
-        </label></div>
+        </label>
+    </div>
     <div>
         내용 :
         <textarea class="form-control" rows="5" name="memoContent" placeholder="내용 작성">
-</textarea></div>
+        </textarea>
+    </div>
+    <div>
+        폴더 :
+        <select name="folderId" >
+            <option>폴더 없음</option>
+            <option th:each="folder:${folder}" th:text="${folder.name}" th:value="${folder.id}">폴더 없음</option>
+        </select>
+    </div>
     <input type="submit" value="작성">
     <button type="button" onclick="location.href='/memos'">취소</button>
 </form>

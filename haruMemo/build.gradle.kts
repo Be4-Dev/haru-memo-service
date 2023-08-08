@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.0"
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
+	kotlin("plugin.jpa") version "1.7.22"
 }
 
 group = "com.haruMemo"
@@ -23,7 +24,7 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation ("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")//@Mapper쓸려면 이 라이브러리 있어야 함
-//	implementation("org.springframework.boot:spring-boot-starter-data-jpa") // <-- 추가됨
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa") // <-- 추가됨
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")     // <-- 추가됨
 	implementation("mysql:mysql-connector-java:8.0.30")// 버전 안 넣어주니까, 에러 남 8.0.30 꼭 넣어주기
 	implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -38,4 +39,15 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+allOpen {
+	annotation("javax.persistence.Entity")
+	annotation("javax.persistence.MappedSuperclass")
+	annotation("javax.persistence.Embeddable")
+}
+noArg {
+	annotation("javax.persistence.Entity")
+	annotation("javax.persistence.MappedSuperclass")
+	annotation("javax.persistence.Embeddable")
 }

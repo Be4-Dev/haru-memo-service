@@ -10,4 +10,6 @@ data class MemoVo(//기본값이 없으면 맵퍼단계에서 에러가 남, 개
     val pinYN: Boolean? = null,
     val memoKeepYN: String? = null,
     val memoDeleteYN: Boolean? = null,
+    val folderId: Long? = null,
+    val folderName: String? = null
 )

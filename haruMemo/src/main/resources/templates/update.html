@@ -13,7 +13,15 @@
     <div>
         내용 :
         <textarea class="form-control" rows="5" name="memoContent" id="memoContent" placeholder="내용 작성" th:text="${memo.memoContent}">
-</textarea></div>
+        </textarea>
+    </div>
+    <div>
+        폴더 :
+        <select name="folderId" id="folderId">
+            <option>폴더 없음</option>
+            <option th:each="folder:${folder}" th:text="${folder.name}" th:value="${folder.id}" th:selected="${folder.id} == ${memo.folderId}">폴더 없음</option>
+        </select>
+    </div>
     <button type="button" id="btn-update">수정</button>
     <button type="button" onclick="location.href='/memos'">취소</button>
 </form>
@@ -29,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var memoTitle = document.getElementById("memoTitle").value;
             var memoContent = document.getElementById("memoContent").value;
             var memoId = [[${memo.memoId}]];
-            alert(memoId);
+            var folderId = document.getElementById("folderId").selectedOptions[0].value;
 
             fetch(`http://localhost:8080/apiTest/memos/[[${memo.memoId}]]`, {
                             method: 'PUT',
@@ -40,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 memoTitle: memoTitle,
                                 memoContent: memoContent,
                                 memoId: memoId,
+                                folderId: folderId,
                             }),
                         }).then(response => {
                             //alert(memoTitle);

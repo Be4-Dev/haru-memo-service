@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="path/jquery-3.7.0.min.js"></script>
+<body>
+<div th:each="folder: ${folder}" class="row">
+    <br>
+    <input type="checkbox" name="memo" value="메모ID받기">
+    <span>[</span>
+    <span th:text="${folder.id}"></span>
+    <span>] </span>
+    <span>폴더명 : </span>
+    <span th:text="${folder.name}">
+        비밀
+    </span>
+    <br>
+    <button type="button" th:onclick="|javascript:btnDelete('${folder.id}')|">삭제</button>
+</div>
+<br>
+<a href="#" th:onclick="|javascript:btnAdd()|">폴더 추가</a>
+<a href="#">일괄 삭제</a>
+<br>
+</body>
+<script th:inline="javascript">
+/*<![CDATA[*/
+    function btnAdd() {
+        var folderName = prompt('폴더명을 입력하세요.', '');
+
+            fetch(`http://localhost:8080/apiTest/folder`, {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                name: folderName
+                            }),
+                        }).then(response => {
+                            alert(folderName);
+                            location.href="/folder";
+                        });
+    }
+
+    function btnDelete(folderId) {
+        if (!confirm("정말 삭제하시겠습니까?")) {
+        } else {
+            fetch(`http://localhost:8080/apiTest/folder/`+folderId, {
+                        method: 'DELETE',
+                        }).then(response => {
+                            if (response.ok) {
+                                return response.text();
+                            }
+                        }).then(msg => {
+                            location.href = '/folder';
+                        });
+        }
+    }
+ /*]]>*/
+</script>

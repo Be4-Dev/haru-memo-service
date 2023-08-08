@@ -1,55 +1,79 @@
 package com.haruMemo.controller.restTest
 
+import com.haruMemo.dto.FolderDto
 import com.haruMemo.dto.MemoDto
 import com.haruMemo.model.MemoVo
-import com.haruMemo.service.MemoService
-import org.springframework.ui.Model
+import com.haruMemo.service.FolderCommandService
+import com.haruMemo.service.MemoCommandService
+import com.haruMemo.service.MemoQueryService
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/apiTest")
-class testController(private val memoService: MemoService) {
+class testController(
+    private val memoCommandService: MemoCommandService,
+    private val memoQueryService: MemoQueryService,
+    private val folderCommandService: FolderCommandService,
+) {
 
     @GetMapping("/memos")
-    fun memos(@RequestParam("searchKeyword", required = false, defaultValue = "")searchKeyword:String,
-              @RequestParam("sort", required = false, defaultValue = "num")sort:String
-    ):List<MemoVo>
-    {
-        return memoService.getList(searchKeyword,sort)
+    fun memos(
+        @RequestParam("searchKeyword", required = false, defaultValue = "") searchKeyword: String,
+        @RequestParam("sort", required = false, defaultValue = "num") sort: String
+    ): List<MemoVo> {
+        return memoQueryService.getList(searchKeyword, sort)
     }
 
     //메모작성
     @PostMapping("/memos")
     fun write(memoDto: MemoDto): String {
-        memoService.writeMemo(memoDto)
+        memoCommandService.writeMemo(memoDto)
+        println(memoDto)
         return "메모 작성 API 완료"
     }
 
     //메모복사
     @PostMapping("/memos/{memoId}")
     fun copy(@PathVariable memoId: Long): String {
-        memoService.copyMemo(memoId)
+        memoCommandService.copyMemo(memoId)
         return "메모 복사 API 완료"
     }
 
     //메모수정
     @PutMapping("/memos/{memoId}")
     fun update(@PathVariable memoId: Long, @RequestBody memoDto: MemoDto): String {
-        memoService.updateMemo(memoId, memoDto)
+        memoCommandService.updateMemo(memoId, memoDto)
+        println(memoDto)
         return "메모 수정 API 완료"
     }
 
     //메모삭제
     @DeleteMapping("/memos/{memoId}")
-    fun delete(@PathVariable memoId: Long): String{
-        memoService.deleteMemo(memoId)
+    fun delete(@PathVariable memoId: Long): String {
+        memoCommandService.deleteMemo(memoId)
         return "메모 삭제 API 완료"
     }
 
     //메모보관여부변경
     @PatchMapping("/memos/{memoId}")
-    fun updateKeepYNMemo(@PathVariable memoId: Long): String {
-        memoService.updateKeepYNMemo(memoId)
+    fun updateKeepYNMemo(@PathVariable memoId: Long, @RequestBody map: Map<String, Boolean>): String {
+        memoCommandService.updateKeepYNMemo(memoId, map["memoKeepYn"] ?: false)
         return "메모 보관여부변경 API 완료"
+    }
+
+    //폴더작성
+    @PostMapping("/folder")
+    fun add(@RequestBody folderDto: FolderDto): String {
+        println("폴더추가테스트@@@")
+        println(folderDto)
+        folderCommandService.addFolder(folderDto)
+        return "폴더 작성 API 완료"
+    }
+
+    //폴더삭제
+    @DeleteMapping("/folder/{folderId}")
+    fun deleteFolder(@PathVariable folderId: Long): String {
+        folderCommandService.deleteFolder(folderId)
+        return "메모 삭제 API 완료"
     }
 }

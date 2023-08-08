@@ -1,8 +1,11 @@
 package com.haruMemo.controller
 
 import com.haruMemo.dto.MemoDto
+import com.haruMemo.model.FolderVo
 import com.haruMemo.model.MemoVo
-import com.haruMemo.service.MemoService
+import com.haruMemo.service.FolderQueryService
+import com.haruMemo.service.MemoCommandService
+import com.haruMemo.service.MemoQueryService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -15,17 +18,25 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
-class MemoController(private val memoService: MemoService) {
+class MemoController(
+    private val memoCommandService: MemoCommandService,
+    private val memoQueryService: MemoQueryService,
+    private val folderQueryService: FolderQueryService
+) {
+
+    @GetMapping("/jpaTest")
+    fun memos():String
+    {
+        return "jpaTest.html"
+    }
 
     @GetMapping("/memos")
     fun memos(model:Model,
               @RequestParam("searchKeyword", required = false, defaultValue = "")searchKeyword:String,
               @RequestParam("sort", required = false, defaultValue = "num")sort:String
-              ):String
+    ):String
     {
-        println("확인용 @@")
-        println(memoService.getList(searchKeyword,sort))
-        val list: List<MemoVo> = memoService.getList(searchKeyword,sort)
+        val list: List<MemoVo> = memoQueryService.getList(searchKeyword,sort)
 
         model.addAttribute("list", list);
         return "index.html"
@@ -33,7 +44,11 @@ class MemoController(private val memoService: MemoService) {
 
     //메모작성 페이지
     @GetMapping("/write")
-    fun write():String{
+    fun write(model:Model):String{
+
+        val folder: List<FolderVo> = folderQueryService.getList()
+        model.addAttribute("folder", folder);
+
         return "write.html"
     }
 
@@ -42,7 +57,7 @@ class MemoController(private val memoService: MemoService) {
     fun write(memoDto: MemoDto): String {
         println("memoDto write 테스트 @@")
         println(memoDto)
-        memoService.writeMemo(memoDto)
+        memoCommandService.writeMemo(memoDto)
         return "redirect:/memos"
     }
 
@@ -51,19 +66,18 @@ class MemoController(private val memoService: MemoService) {
     fun copy(@PathVariable memoId: Long): String {
         println("memo copy 테스트 @@")
         println(memoId)
-        memoService.copyMemo(memoId)
+        memoCommandService.copyMemo(memoId)
         return "redirect:/memos"
     }
 
     //메모수정 페이지
     @GetMapping("/memos/{memoId}")
     fun update(model:Model, @PathVariable memoId: Long):String{
-        val memoVo:MemoVo = memoService.getMemo(memoId)
-
-        println("memoDto update 테스트 @@")
-        println(memoVo)
-
+        val memoVo:MemoVo = memoQueryService.getMemo(memoId)
         model.addAttribute("memo", memoVo);
+
+        val folder: List<FolderVo> = folderQueryService.getList()
+        model.addAttribute("folder", folder);
         return "update.html"
     }
 
@@ -73,7 +87,7 @@ class MemoController(private val memoService: MemoService) {
         println("memoDto modify 테스트 @@")
         println(memoId)
         println(memoDto)
-        memoService.updateMemo(memoId, memoDto)
+        memoCommandService.updateMemo(memoId, memoDto)
         return "redirect:/memos"
     }
 
@@ -81,15 +95,15 @@ class MemoController(private val memoService: MemoService) {
     @DeleteMapping("/memos/{memoId}")
     fun delete(@PathVariable memoId: Long): String{
         println("memo 삭제 테스트 @@")
-        memoService.deleteMemo(memoId)
+        memoCommandService.deleteMemo(memoId)
         return "redirect:/memos"
     }
 
     //메모보관여부변경
-    @PatchMapping("/memos/{memoId}")
-    fun updateKeepYNMemo(@PathVariable memoId: Long): String {
-        println("memoDto 보관여부수정 테스트 @@")
-        memoService.updateKeepYNMemo(memoId)
-        return "redirect:/memos"
-    }
+//    @PatchMapping("/memos/{memoId}")
+//    fun updateKeepYNMemo(@PathVariable memoId: Long): String {
+//        println("memoDto 보관여부수정 테스트 @@")
+//        memoCommandService.updateKeepYNMemo(memoId)
+//        return "redirect:/memos"
+//    }
 }

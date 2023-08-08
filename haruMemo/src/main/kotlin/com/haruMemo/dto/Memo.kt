@@ -1,31 +1,32 @@
 package com.haruMemo.dto
 
-import com.haruMemo.model.MemoVo
-import org.jetbrains.annotations.NotNull
+import com.haruMemo.model.MemoEntity
+import java.time.LocalDateTime
 
 data class MemoDto(
-    val memoId: Long?,
+    val memoId: Long? = null,
     val memoTitle: String,
     val memoContent: String,
     val memoPassword: String?,
     val pinYN: Boolean?,
     val memoKeepYN: String?,
-    val memoDeleteYN: Boolean?,
-    val regDt: String?,
-    val updDt: String?,
+    val memoDeleteYN: String?,
+    val regDt: LocalDateTime?,
+    val updDt: LocalDateTime?,
+    val folderId: Long? = null
 ) {
-    fun toMemoVo(): MemoVo {
+    fun toMemoEntity(): MemoEntity {
 
-        return MemoVo(
+        return MemoEntity(
             memoId = memoId,
             memoTitle = memoTitle,
             memoContent = memoContent,
             memoPassword = memoPassword,
-            pinYN = pinYN,
-            memoKeepYN = memoKeepYN,
-            memoDeleteYN = memoDeleteYN,
+            memoKeepYn = memoKeepYN,
+            memoDeleteYn = memoDeleteYN,
             regDt = regDt,
-            updDt = updDt
+            updDt = updDt,
+            folderId = folderId
         )
     }
 }
