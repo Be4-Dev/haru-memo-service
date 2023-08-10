@@ -1,1 +1,1 @@
-rootProject.name = "haru.memo"
+rootProject.name = "haru-memo"
