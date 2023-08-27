@@ -83,6 +83,7 @@ jobs:
           if docker ps -q --filter "name=${{ env.CONTAINER_NAME }}" | grep -q .; then
             docker stop ${{ env.CONTAINER_NAME }}
             docker rm ${{ env.CONTAINER_NAME }}
+          fi
 
       # Docker: 서버에 haru-memo 앱의 도커 이미지가 남아있다면 삭제합니다.
       - name: Check if image exists and remove it
@@ -92,6 +93,7 @@ jobs:
         run: |
           if docker images | grep -q "$IMAGE_NAME"; then
             docker rmi $IMAGE_NAME:$IMAGE_TAG
+          fi
 
       # Docker: 도커 허브에 로그인합니다.
       - name: Login to Docker Hub
