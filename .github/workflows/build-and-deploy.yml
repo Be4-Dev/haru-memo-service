@@ -1,0 +1,90 @@
+name: Build & Deploy
+
+# Action 작동 조건 지정
+on:
+  push: # 저장소에 코드를 push 했을 때 실행할 옵션
+    branches: [main]
+
+# 배포용 환경 변수 지정
+env:
+  APPLICATION_NAME: 'haru-memo' # DockerHub에 등록될 앱의 이름
+  APPLICATION_VERSION: 'latest' # DockerHub에 등록된 앱의 버전
+
+# Workflow -> Job -> Step -> Task로 이어지는 Git Action 계층 구조
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest #build가 실행될 OS 환경 지정
+
+    steps:
+      # 빈 깡통 Runner에 레포 소스코드를 클론으로 가져온 뒤 체크아웃합니다.
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      # JDK를 설치합니다.
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Gradle 실행 권한을 부여합니다.
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Gradle clean build 명령어를 실행합니다.
+      - name: Gradle clean build
+        run: ./gradlew clean build
+
+      # 가상 컨테이너 안에 Docker 환경을 설치합니다.
+      - name : Set up docker
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Docker 허브에 로그인합니다.
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # 도커 이미지를 빌드한 뒤 도커 허브에 push합니다.
+      - name: Build and Push to DockerHub
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
+
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: [self-hosted, haru-memo]
+    steps:
+      # 도커 허브 로그인
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # 배포할 서버에서 돌고 있는 Self-hosted 러너로 Docker-compose 명령어 실행
+      - name: Check if container exists and stop it
+        run: |
+          CONTAINER_NAME=${{ secrets.APPLICATION_NAME }}
+          if docker ps -q --filter "name=$CONTAINER_NAME" | grep -q .; then
+            docker stop $CONTAINER_NAME
+            docker rm $$CONTAINER_NAME
+
+      - name: Check if image exists and remove it
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.APPLICATION_NAME }}
+          IMAGE_TAG=${{ env.APPLICATION_VERSION }}
+          if docker images | grep -q "$IMAGE_NAME"; then
+            docker rmi $IMAGE_NAME:$IMAGE_TAG
+
+      - name: Pull and Run Docker image
+        run: |
+          docker pull $IMAGE_NAME:$IMAGE_TAG
+          docker run -d -p 8080:8080 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
