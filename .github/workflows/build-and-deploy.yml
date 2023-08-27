@@ -7,8 +7,9 @@ on:
 
 # 배포용 환경 변수 지정
 env:
-  APPLICATION_NAME: 'haru-memo' # DockerHub에 등록될 앱의 이름
-  APPLICATION_VERSION: 'latest' # DockerHub에 등록된 앱의 버전
+  CONTAINER_NAME: haru-memo # DockerHub에 등록될 앱의 이름
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/haru-memo
+  IMAGE_TAG: latest # DockerHub에 등록된 앱의 버전
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
@@ -17,9 +18,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest # Runner의 OS 환경 지정
-    env:
-      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
-      IMAGE_TAG: ${{ env.APPLICATION_VERSION }}
 
     steps:
       # GitHub: 빈 깡통 Runner에 레포 소스코드를 클론으로 가져온 뒤 체크아웃합니다.
@@ -77,10 +75,6 @@ jobs:
     needs: build
     name: Deploy
     runs-on: [self-hosted, haru-memo]
-    env:
-      CONTAINER_NAME: ${{ env.APPLICATION_NAME }}
-      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
-      IMAGE_TAG: ${{ env.APPLICATION_VERSION }}
 
     steps:
       # Docker: 서버에서 실행 중인 haru-memo 앱의 컨테이너가 있다면 종료시킵니다.
