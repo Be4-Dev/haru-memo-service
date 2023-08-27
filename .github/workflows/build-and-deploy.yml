@@ -62,6 +62,9 @@ jobs:
       # Docker: 도커 이미지를 빌드한 뒤 도커 허브에 push합니다.
       - name: Build and Push to DockerHub
         uses: docker/build-push-action@v4
+        env:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         with:
           context: .
           push: true
@@ -77,13 +80,18 @@ jobs:
     steps:
       # Docker: 서버에서 실행 중인 haru-memo 앱의 컨테이너가 있다면 종료시킵니다.
       - name: Check if container exists and stop it
+        env:
+          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
         run: |
-          if docker ps -q --filter "name=$CONTAINER_NAME" | grep -q .; then
-            docker stop $CONTAINER_NAME
-            docker rm $CONTAINER_NAME
+          if docker ps -q --filter "name=${{ env.CONTAINER_NAME }}" | grep -q .; then
+            docker stop ${{ env.CONTAINER_NAME }}
+            docker rm ${{ env.CONTAINER_NAME }}
 
       # Docker: 서버에 haru-memo 앱의 도커 이미지가 남아있다면 삭제합니다.
       - name: Check if image exists and remove it
+        env:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           if docker images | grep -q "$IMAGE_NAME"; then
             docker rmi $IMAGE_NAME:$IMAGE_TAG
@@ -95,6 +103,9 @@ jobs:
 
       # Docker: 도커 허브에서 이미지를 pull 받은 뒤 해당 이미지의 컨테이너를 띄웁니다.
       - name: Pull and Run Docker image
+        env:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           docker pull $IMAGE_NAME:$IMAGE_TAG
           docker run -d -p 8080:8080 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
