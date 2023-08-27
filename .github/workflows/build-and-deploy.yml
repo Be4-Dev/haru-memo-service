@@ -56,9 +56,11 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
+          cache-from: type=gha
+          cache-to: type=gha, mode=max
 
   deploy:
-    needs: build가
+    needs: build
     name: Deploy
     runs-on: [self-hosted, haru-memo]
     steps:
