@@ -14,7 +14,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: macos-latest #build가 실행될 OS 환경 지정
+    runs-on: ubuntu-latest #build가 실행될 OS 환경 지정
 
     steps:
       # 빈 깡통 Runner에 레포 소스코드를 클론으로 가져온 뒤 체크아웃합니다.
