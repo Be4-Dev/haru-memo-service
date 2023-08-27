@@ -72,14 +72,14 @@ jobs:
       # 배포할 서버에서 돌고 있는 Self-hosted 러너로 Docker-compose 명령어 실행
       - name: Check if container exists and stop it
         run: |
-          CONTAINER_NAME=${{ secrets.APPLICATION_NAME }}
+          CONTAINER_NAME=${{ env.APPLICATION_NAME }}
           if docker ps -q --filter "name=$CONTAINER_NAME" | grep -q .; then
             docker stop $CONTAINER_NAME
             docker rm $$CONTAINER_NAME
 
       - name: Check if image exists and remove it
         run: |
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.APPLICATION_NAME }}
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME}}/${{ env.APPLICATION_NAME }}
           IMAGE_TAG=${{ env.APPLICATION_VERSION }}
           if docker images | grep -q "$IMAGE_NAME"; then
             docker rmi $IMAGE_NAME:$IMAGE_TAG
