@@ -64,7 +64,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}:${{ env.APPLICATION_VERSION }}
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
