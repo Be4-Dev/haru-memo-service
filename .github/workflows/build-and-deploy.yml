@@ -36,6 +36,8 @@ jobs:
       - name: Gradle clean build
         run: ./gradlew clean build
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       # 가상 컨테이너 안에 Docker 환경 설치
       - name: Set up Docker Buildx
@@ -48,15 +50,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # Docker 빌드
-      - name: Build Docker
-        run: ./gradlew bootBuildImage --imageName=${{ env.APPLICATION_NAME }}
-
-      # 생성된 Image 추가
-      - name: Docker Push
-        run: |
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}:${{ env.APPLICATION_VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
+      # 도커 이미지를 빌드한 뒤 도커 허브에 push합니다.
+      - name: Build and Push to DockerHub
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
 
   deploy:
     needs: build
