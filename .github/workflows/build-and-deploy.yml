@@ -60,8 +60,8 @@ jobs:
 
       - name: Docker push
         run: |
-          docker tag ${{secrets.DOCKER_REPO_PROD}}:latest ${{secrets.DOCKERHUB_USERNAME}}/${{secrets.DOCKER_REPO_PROD}}:latest
-          docker push ${{secrets.DOCKERHUB_USERNAME}}/${{secrets.DOCKER_REPO_PROD}}
+          docker tag ${{ env.APPLICATION_NAME }}:${{ env.APPLICATION_VERSION }} ${{ secrets.DOCKERHUB_USERNAME}}/${{ env.APPLICATION_NAME }}:${{ env.APPLICATION_VERSION }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
 
   deploy:
     needs: build
