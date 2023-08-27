@@ -62,13 +62,10 @@ jobs:
       # Docker: 도커 이미지를 빌드한 뒤 도커 허브에 push합니다.
       - name: Build and Push to DockerHub
         uses: docker/build-push-action@v4
-        env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         with:
           context: .
           push: true
-          tags: $IMAGE_NAME:$IMAGE_VERSION
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONTAINER_NAME }}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
