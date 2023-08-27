@@ -75,25 +75,16 @@ jobs:
     runs-on: [self-hosted, haru-memo]
 
     steps:
-      # Docker: 서버에서 실행 중인 haru-memo 앱의 컨테이너가 있다면 종료시킵니다.
-      - name: Check if container exists and stop it
+      # Docker : Run
+      - name: Docker clean up
         env:
           CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
-        run: |
-          if docker ps | grep -q "$CONTAINER_NAME"; then
-            docker stop $CONTAINER_NAME
-            docker rm $CONTAINER_NAME
-          fi
-
-      # Docker: 서버에 haru-memo 앱의 도커 이미지가 남아있다면 삭제합니다.
-      - name: Check if image exists and remove it
-        env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
-          if docker images | grep -q "$IMAGE_NAME"; then
-            docker rmi $IMAGE_NAME:$IMAGE_TAG
-          fi
+          docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . &&
+          docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
+          docker rmi $IMAGE_NAME:$IMAGE_TAG
 
       # Docker: 도커 허브에 로그인합니다.
       - name: Login to Docker Hub
