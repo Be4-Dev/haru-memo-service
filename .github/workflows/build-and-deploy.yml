@@ -71,7 +71,7 @@ jobs:
   deploy:
     needs: build
     name: Deploy
-    runs-on: [self-hosted, haru-memo]
+    runs-on: self-hosted
     steps:
       # 도커 허브 로그인
       - name: Login to Docker Hub
