@@ -39,7 +39,7 @@ jobs:
       # 가상 컨테이너 안에 Docker 환경을 설치합니다.
       - name : Set up docker
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       # Docker 허브에 로그인합니다.
       - name: Login to DockerHub
