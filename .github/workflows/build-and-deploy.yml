@@ -14,7 +14,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest #build가 실행될 OS 환경 지정
+    runs-on: ubuntu-latest # Runner의 OS 환경 지정
 
     steps:
       # 빈 깡통 Runner에 레포 소스코드를 클론으로 가져온 뒤 체크아웃합니다.
@@ -49,19 +49,21 @@ jobs:
 
       # Docker 허브에 로그인합니다.
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # docker 빌드
-      - name: build docker
-        run: ./gradlew bootBuildImage --imageName=${{ secrets.DOCKER_REPO_PROD }}
-
-      - name: Docker push
-        run: |
-          docker tag ${{ env.APPLICATION_NAME }}:${{ env.APPLICATION_VERSION }} ${{ secrets.DOCKERHUB_USERNAME}}/${{ env.APPLICATION_NAME }}:${{ env.APPLICATION_VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
+      # 도커 이미지를 빌드한 뒤 도커 허브에 push합니다.
+      - name: Build and Push to DockerHub
+        id: docker_build
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
+          cache-from: type=gha
+          cache-to: type=gha, mode=max
 
   deploy:
     needs: build
